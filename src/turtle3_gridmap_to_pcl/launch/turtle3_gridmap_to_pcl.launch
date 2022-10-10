@@ -1,0 +1,5 @@
+<launch>
+    <node name="turtle3_gridmap_to_pcl_node" pkg="turtle3_gridmap_to_pcl" type="turtle3_gridmap_to_pcl" output="screen">
+    </node>
+</launch>
+

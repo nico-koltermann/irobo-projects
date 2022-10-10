@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="enable_rviz" default="true"/>
+  <arg name="map_name" default="turtle_gmap_28092022.yaml"/>
+
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  <include file="$(find turtle3_gridmap_to_pcl)/launch/turtle3_gridmap_to_pcl.launch"/>
+
+  <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization_only_ekf.launch"/>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find turtlebot3_custom)/maps/$(arg map_name)" />
+  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="odom_scan_tf" args="0 0 0 0 0 0 odom base_scan" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_scan_tf" args="0 0 0 0 0 0 map base_scan" />
+
+  <!-- Launch rviz visualization-->
+  <group if="$(arg enable_rviz)">
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_lab1.rviz" />
+  </group>
+
+</launch>
