@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/>
+  <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/> -->
+
+  <!-- Gazebo Simulator -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  
+  <!-- Teleoperation -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+
+  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch" > 
+    <arg name="map_file" default="$(arg map_file)"/>
+  </include>
+
+</launch>

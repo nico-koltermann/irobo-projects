@@ -8,7 +8,7 @@
   <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization.launch"/>
 
   <include file="$(find turtle3_gridmap_to_pcl)/launch/turtle3_gridmap_to_pcl.launch"/>
-  <node pkg="tf2_ros" type="static_transform_publisher" name="map_scan_tf" args="0 0 0 0 0 0 map base_scan" />
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_scan_tf" args="0 0 0 0 0 0 map base_link" />
 
   <!-- Launch rviz visualization-->
   <group if="$(arg enable_rviz)">

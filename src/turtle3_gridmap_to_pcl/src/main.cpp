@@ -36,7 +36,6 @@ private:
     void occupency_scan_cb(const sensor_msgs::LaserScan& in_scan);
     void calculateLaser();
   
-    sensor_msgs::LaserScan output_scan_;
     sensor_msgs::LaserScan scan_save_;
 
     nav_msgs::OccupancyGrid map_;
@@ -46,6 +45,7 @@ private:
     ros::Publisher pub_;
     ros::Publisher point_cloud_publisher_;
     ros::Publisher point_cloud_publisher2_;
+    ros::Publisher point_cloud_publisher3_;
     ros::Subscriber sub_ogm_; 
     ros::Subscriber sub_scan_; 
     
@@ -56,8 +56,9 @@ TransformGridMap::TransformGridMap(ros::NodeHandle& nh) {
     sub_ogm_ = nh.subscribe("map", 1, &TransformGridMap::occupency_grid_map_cb, this);
     sub_scan_ = nh.subscribe("scan", 1, &TransformGridMap::occupency_scan_cb, this);
     pub_ = nh.advertise<sensor_msgs::LaserScan> ("output", 1);
-    point_cloud_publisher_ = nh.advertise<sensor_msgs::PointCloud2> ("/cloud", 100, false);
-    point_cloud_publisher2_ = nh.advertise<sensor_msgs::PointCloud2> ("/cloud2", 100, false);
+    point_cloud_publisher_ = nh.advertise<sensor_msgs::PointCloud2> ("/input", 100, false);
+    point_cloud_publisher2_ = nh.advertise<sensor_msgs::PointCloud2> ("/input_reference", 100, false);
+    point_cloud_publisher3_ = nh.advertise<sensor_msgs::PointCloud2> ("/final", 100, false);
 }
 
 void TransformGridMap::occupency_grid_map_cb(const nav_msgs::OccupancyGrid& ogm) {
@@ -69,8 +70,8 @@ void TransformGridMap::calculateLaser() {
     geometry_msgs::PointStamped ps;
     geometry_msgs::PointStamped out_ps;
 
-    sensor_msgs::PointCloud2 pcl;
-    sensor_msgs::PointCloud2 pcl2;
+    sensor_msgs::PointCloud2 pcl_scan;
+    sensor_msgs::PointCloud2 pcl_map;
 
     ps.header.stamp = ros::Time::now();
     ps.header.frame_id = map_.header.frame_id;
@@ -78,9 +79,9 @@ void TransformGridMap::calculateLaser() {
     PointCloud cluster;
     cluster.height  = 1;
     cluster.is_dense = true;
-    cluster.header.frame_id = "map";
+    cluster.header.frame_id = "base_scan";
 
-    projector_.transformLaserScanToPointCloud("base_scan", scan_save_, pcl2, listener_);
+    projector_.transformLaserScanToPointCloud("base_scan", scan_save_, pcl_scan, listener_);
 
     for (int width = 0; width < map_.info.width; ++width)
     {
@@ -101,32 +102,35 @@ void TransformGridMap::calculateLaser() {
         }
     }
 
-    pcl::toROSMsg(cluster, pcl);
-    point_cloud_publisher_.publish(pcl);
-    point_cloud_publisher2_.publish(pcl2);
+    pcl::toROSMsg(cluster, pcl_map);
 
-    PointCloud::Ptr cluster1;
-    PointCloud::Ptr cluster2;
+    point_cloud_publisher_.publish(pcl_map);
+    point_cloud_publisher2_.publish(pcl_scan);
 
-    // pcl::fromROSMsg(pcl, *cluster1);
-    // pcl::fromROSMsg(pcl2, *cluster2);
+    pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_scan( new pcl::PointCloud<pcl::PointXYZ>() );
+    pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_map( new pcl::PointCloud<pcl::PointXYZ>() );
 
-    // pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
-    // icp.setInputSource(cluster1);
-    // icp.setInputTarget(cluster2);
+    pcl::fromROSMsg(pcl_scan, *point_cloud_scan);
+    pcl::fromROSMsg(pcl_map, *point_cloud_map);
 
-    // pcl::PointCloud<pcl::PointXYZ> Final;
-    // icp.align(Final);
-    // std::cout << icp.getFinalTransformation() << std::endl;
+    pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+    icp.setInputSource(point_cloud_scan);
+    icp.setInputTarget(point_cloud_map);
 
+    pcl::PointCloud<pcl::PointXYZ> Final;
+    icp.align(Final);
+
+    std::cout << icp.getFinalTransformation() << std::endl;
+
+    pcl::toROSMsg(Final, pcl_scan);
+
+    pcl_scan.header.frame_id = "base_scan"; 
+    point_cloud_publisher3_.publish(pcl_scan);
 }
 
 void TransformGridMap::occupency_scan_cb(const sensor_msgs::LaserScan& in_scan) {
     if (!(map_.data.size() == 0)) {
-        output_scan_ = in_scan;
-        output_scan_.header.frame_id = "base_scan";
         scan_save_ = in_scan;
-        output_scan_.ranges.clear();
         loadMapOnce = true;
 
         calculateLaser();

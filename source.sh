@@ -7,7 +7,8 @@ ROBOT_NUMBER=11
 
 export LAB_ROOT=$( cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 
-printf "Sourcing LAb Workspace"
+printf "Sourcing Lab Workspace"
+printf "\n"
 
 # check whether devel folder exists
 if [ -f "${LAB_ROOT}/devel/setup.bash" ]; then
@@ -21,13 +22,20 @@ fi
 
 [[ -f "${LAB_ROOT}/ipconfig" ]] && source "${LAB_ROOT}/ipconfig" || true
 
-# IP Config
-export ROS_IP=192.168.28.171
-export ROS_MASTER_URI=http://192.168.28.${ROBOT_NUMBER}:11311
 
-# TURTLE Info
-export TURTLEBOT3_MODEL=waffle_pi
-export TURTLEBOT3_NUMBER=${ROBOT_NUMBER}
-export TURTLEBOT3_NAME=waffle${ROBOT_NAME}
-export TURTLEBOT3_IP=192.168.28.${ROBOT_NUMBER}
+if [[ $1 == "robot" ]]; then
+    # IP Config
+    export ROS_IP=192.168.28.171
+    export ROS_MASTER_URI=http://192.168.28.${ROBOT_NUMBER}:11311
+    # TURTLE Info
+    export TURTLEBOT3_MODEL=waffle_pi
+    export TURTLEBOT3_NUMBER=${ROBOT_NUMBER}
+    export TURTLEBOT3_NAME=waffle${ROBOT_NAME}
+    export TURTLEBOT3_IP=192.168.28.${ROBOT_NUMBER}
+else 
+    # IP Config
+    unset ROS_IP
+    export ROS_MASTER_URI=http://localhost:11311
+fi
+
 

@@ -1,18 +1,38 @@
 <?xml version="1.0"?>
 <launch>
 
-  <arg name="enable_rviz" default="false"/>
 
-  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/> -->
-  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  <!-- Arguments -->
+  <arg name="open_rviz" default="true"/>
+  <arg name="TURTLEBOT3_MODEL" default="waffle_pi"/>
+  <arg name="model" default="$(arg TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
 
-  <include file="$(find turtlebot3_navigation)/launch/turtlebot3_navigation.launch" > 
-    <arg name="map_file" default="$(find turtlebot3_custom)/maps/lab_06102022.yaml"/>
+  <!-- <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/> -->
+  <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/>
+
+  <!-- Turtlebot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    <arg name="model" value="$(arg model)" />
   </include>
 
-  <!-- Launch rviz visualization-->
-  <group if="$(arg enable_rviz)">
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_lab1.rviz" />
+  <!-- Map Server -->
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <!-- Gazebo Simulator -->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  
+  <!-- Teleoperation -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+
+  <!-- AMCL -->
+  <node pkg="amcl" type="amcl" name="amcl" >
+    <rosparam command="load" file="$(find turtlebot3_custom)/params/amcl.yaml" />
+  </node>
+
+  <!-- Rviz -->
+  <group if="$(arg open_rviz)"> 
+    <node pkg="rviz" type="rviz" name="rviz" required="true"
+          args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
   </group>
 
 </launch>
