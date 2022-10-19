@@ -6,7 +6,9 @@
 
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
+  <arg name="record" default="false"/>
   <arg name="model" default="waffle"/>
+  <arg name="time_now" value="`date +'%Y-%m-%d-%H-%M-%S'`" />
 
   <!-- Map  -->
   <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/lab_06102022.yaml"/> -->
@@ -64,5 +66,9 @@
     <node pkg="rviz" type="rviz" name="rviz" required="true"
           args="-d $(arg rviz_file)"/>
   </group>
+
+   <node pkg="rosbag" type="record" name="record_cmd"
+       args="record /cmd_vel -o $(find evaluation)/bags/vel.bag"
+       if="$(arg record)" />
 
 </launch>
