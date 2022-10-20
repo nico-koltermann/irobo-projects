@@ -32,6 +32,7 @@ if [[ $1 == "robot" ]]; then
     export TURTLEBOT3_NUMBER=${ROBOT_NUMBER}
     export TURTLEBOT3_NAME=waffle${ROBOT_NAME}
     export TURTLEBOT3_IP=192.168.28.${ROBOT_NUMBER}
+    echo "Robot setup ready"
 else 
     # IP Config
     unset ROS_IP
