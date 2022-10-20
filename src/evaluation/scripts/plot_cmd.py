@@ -95,8 +95,8 @@ def plot_line(data, name, color, x_label="", y_label=""):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    plt.savefig(final_path + name + '.pgf', bbox_inches = 'tight')
-    plt.savefig(final_path + name + '.png',dpi=500, bbox_inches = 'tight')
+    plt.savefig(final_path + name + '_' + thismodule.file_name + '.pgf', bbox_inches = 'tight')
+    plt.savefig(final_path + name + '_' + thismodule.file_name +'.png',dpi=500, bbox_inches = 'tight')
 
 
 if __name__ == '__main__':
