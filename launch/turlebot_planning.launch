@@ -12,7 +12,7 @@
 
   <!-- Map  -->
   <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/lab_06102022.yaml"/> -->
-  <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/>
+  <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobo_map.yaml"/>
   <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/> -->
 
   <!-- Arguments: Move Base -->
@@ -30,7 +30,7 @@
 
   <!-- Gazebo Simulator -->
   <group if="$(arg run_on_real_car)"> 
-    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+    <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_irobo.launch"/>
   </group>  
 
   <!-- Teleoperation -->

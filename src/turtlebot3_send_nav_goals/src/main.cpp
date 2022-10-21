@@ -72,9 +72,9 @@ void PlanPath::occupency_grid_map_cb(const nav_msgs::OccupancyGrid& ogm) {
     map_ = ogm;
 
     geometry_msgs::Point p1;    p1.x = -0.5;   p1.y = -0.5;
-    geometry_msgs::Point p2;    p2.x = 2.0;    p2.y = 0.5;
-    geometry_msgs::Point p3;    p3.x = -0.5;   p3.y = -1.5;
-    geometry_msgs::Point p4;    p4.x = -0.5;   p4.y = 1.5;
+    geometry_msgs::Point p2;    p2.x = 3.0;    p2.y = 1.5;
+    geometry_msgs::Point p3;    p3.x = 0.5;   p3.y = 1.5;
+    geometry_msgs::Point p4;    p4.x = -1.5;   p4.y = -1.5;
 
     p_vec_ =  {p1, p2, p3, p4};
 
