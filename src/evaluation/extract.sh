@@ -2,7 +2,7 @@
 
 YAML_PATH="./yaml"
 
-array=( "cmd_vel" )
+TOPIC="cmd_vel"
 
 LAST_BAG=$(find bags/ -printf '%T+ %p\n' | sort -r | head -n1 | cut -d ' ' -f2 | cut -b 6-)
 
@@ -36,10 +36,8 @@ FILENAME="${ROSBAG_NAME%.*}"
 
 rosbag info -y "bags/$ROSBAG_NAME" >> "$YAML_PATH/$filename-info.yaml"
 
-for i in "${array[@]}"
-do
-    python3 ros_readbagfile.py  ./bags/$ROSBAG_NAME "/$i" | tee $YAML_PATH/$FILENAME-$i.yaml
-    python3 scripts/plot_cmd.py -f $FILENAME-$i.yaml
-done
+python3 ros_readbagfile.py  ./bags/$ROSBAG_NAME "/$TOPIC" | tee $YAML_PATH/$FILENAME-$TOPIC.yaml
+python3 scripts/plot_cmd.py -f $FILENAME-$TOPIC.yaml
+# python3 scripts/plot_odom.py -f $FILENAME-$TOPIC.yaml
 
 

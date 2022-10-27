@@ -1,12 +1,37 @@
 <?xml version="1.0"?>
 <launch>
 
-  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/> -->
+  <arg name="enable_rviz" default="true" />
+  <arg name="model" default="waffle" />
+
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
   <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
 
   <!-- <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization.launch"/> -->
 
+  <!-- Turtlebot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+  <!-- Arguments -->
+  <arg name="configuration_basename" default="turtlebot3_lds_2d.lua"/>
+  <arg name="set_base_frame" default="base_footprint"/>
+  <arg name="set_odom_frame" default="odom"/>
+  <arg name="set_map_frame"  default="map"/>
+
+  <!-- Gmapping -->
+  <node pkg="gmapping" type="slam_gmapping" name="turtlebot3_slam_gmapping" output="screen">
   <!-- Parameter: http://wiki.ros.org/gmapping -->
-  <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" />
+    <param name="base_frame" value="$(arg set_base_frame)"/>
+    <param name="odom_frame" value="$(arg set_odom_frame)"/>
+    <param name="map_frame"  value="$(arg set_map_frame)"/>
+    <rosparam command="load" file="$(find turtlebot3_custom)/config/gmapping_params.yaml" />
+  </node>
+
+  <!-- Launch rviz visualization-->
+  <group if="$(arg enable_rviz)">
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_slam.rviz" />
+  </group>
 
 </launch>
