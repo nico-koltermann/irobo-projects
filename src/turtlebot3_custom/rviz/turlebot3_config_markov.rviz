@@ -248,6 +248,14 @@ Visualization Manager:
       Topic: /viz/cell
       Unreliable: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /viz/test
+      Name: MarkerArray
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -276,7 +284,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 18.110614776611328
+      Distance: 8.942201614379883
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -284,17 +292,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 1.2131712436676025
-        Y: 4.204744338989258
-        Z: 0.5139439105987549
+        X: 0.2869085669517517
+        Y: 0.12923675775527954
+        Z: -0.3056938052177429
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7347962260246277
+      Pitch: 1.0647962093353271
       Target Frame: <Fixed Frame>
-      Yaw: 3.100398540496826
+      Yaw: 3.125398635864258
     Saved: ~
 Window Geometry:
   Displays:
