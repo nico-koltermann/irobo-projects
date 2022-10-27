@@ -12,11 +12,10 @@ from visualization_msgs.msg import Marker, MarkerArray
 class MarkovDecision():
 
     def __init__(self):
-        self.cells = None
-
         self.finalArray = MarkerArray()
         self.mapPoints = []
         self.gridMap = None
+        self.occupied = []
 
         self.load_parameters()
         self.subscribe_to_topics()
@@ -29,7 +28,6 @@ class MarkovDecision():
         self.sub_map = rospy.Subscriber("/map", OccupancyGrid, self.map_callback)
 
     def publish_to_topics(self):
-        self.pub_cells = rospy.Publisher("/viz/cell", GridCells, queue_size=1)
         self.pub_viz = rospy.Publisher("/viz/test", MarkerArray, queue_size=1)
 
     def getEmptyMarker(self):
@@ -61,12 +59,7 @@ class MarkovDecision():
         offset = -10
         cell_size = 0.3
 
-        self.cells = GridCells()
-        self.cells.header.stamp = rospy.Time().now()
-        self.cells.header.frame_id = "map"
-
-        self.cells.cell_height = cell_size
-        self.cells.cell_width = cell_size
+        goal = 250
 
         i = 0
         for x in range(0, msg.info.width):
@@ -78,10 +71,23 @@ class MarkovDecision():
                     marker.id = i
                     i = i + 1
 
-                    # Set the color
-                    marker.color.r = 1.0 * random()
-                    marker.color.g = 1.0 * random()
-                    marker.color.b = 0.0
+                    if i == goal:
+                        marker.color.r = 1.0
+                        marker.color.g = 1.0
+                        marker.color.b = 0.0
+                        self.occupied.append(0)
+                    elif dataPoint == 0 and not (i == goal):
+                         # Set the color
+                        marker.color.r = 0.6 * random()
+                        marker.color.g = 0.6 * random()
+                        marker.color.b = 0.0
+                        self.occupied.append(0)
+                    else: 
+                        marker.color.r = 0.0
+                        marker.color.g = 0.0
+                        marker.color.b = 0.0
+                        self.occupied.append(1)
+
                     marker.color.a = 1.0
 
                     marker.pose.position.x = (x * msg.info.resolution) + offset + (cell_size * 0.8)
@@ -97,7 +103,6 @@ class MarkovDecision():
                     ))
 
         self.pub_viz.publish(self.finalArray)
-
         self.calculateMarkov()
 
 
