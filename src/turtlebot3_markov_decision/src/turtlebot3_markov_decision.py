@@ -26,7 +26,7 @@ class MarkovDecision():
 
     def  map_callback(self, msg):
         
-        offset = -10
+        offset = -9.75
         cell_size = 0.3
 
         self.cells = GridCells()
@@ -36,12 +36,13 @@ class MarkovDecision():
         self.cells.cell_height = cell_size
         self.cells.cell_width = cell_size
 
-        p = Point()
+        
         for width in range(0, msg.info.width):
             for height in range(0, msg.info.height):
                 if 0 <= msg.data[height * msg.info.width + width] < 10:
-                    p.x = width * msg.info.resolution + offset
-                    p.y = height * msg.info.resolution + offset
+                    p = Point()
+                    p.x = (width * msg.info.resolution + offset)
+                    p.y = (height * msg.info.resolution + offset)
                     self.cells.cells.append(p)
 
         rospy.logwarn(len(self.cells.cells))

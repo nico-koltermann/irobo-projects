@@ -74,5 +74,9 @@
         "variant": "cpp",
         "bit": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "/home/nico/IST_técnico/irobo-projects/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
 }
