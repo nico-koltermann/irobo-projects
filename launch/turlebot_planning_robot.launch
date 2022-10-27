@@ -8,7 +8,6 @@
   <arg name="open_rviz" default="true"/>
   <arg name="record" default="false"/>
   <arg name="model" default="waffle"/>
-  <arg name="time_now" value="`date +'%Y-%m-%d-%H-%M-%S'`" />
 
   <!-- Map  -->
   <arg name="map_file" default="$(find turtlebot3_custom)/maps/lab_full_v1.yaml"/>
@@ -27,7 +26,7 @@
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
   <!-- Teleoperation -->
-  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/> -->
 
   <!-- AMCL -->
   <node pkg="amcl" type="amcl" name="amcl" >
@@ -57,7 +56,7 @@
   </group>
 
    <node pkg="rosbag" type="record" name="record_cmd"
-       args="record /cmd_vel -o $(find evaluation)/bags/real_robot_$(arg time_now).bag"
+       args="record /cmd_vel -o $(find evaluation)/bags/real_robot_.bag"
        if="$(arg record)" />
 
 </launch>
