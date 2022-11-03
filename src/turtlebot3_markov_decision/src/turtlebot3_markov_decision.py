@@ -130,20 +130,6 @@ class MarkovDecision():
         self.path.pop(0)
         i = 1
         for p in self.path:
-
-            # goal = MoveBaseGoal()
-            # goal.target_pose.header.frame_id = "map"
-            # goal.target_pose.header.stamp = rospy.Time.now()
-            # goal.target_pose.pose.position.x = p.x
-            # goal.target_pose.pose.position.y = p.y
-            # goal.target_pose.pose.orientation.w = 1.0
-
-            # client.send_goal(goal)
-            # wait = client.wait_for_result()
-            # if not wait:
-            #     rospy.logerr("Action server not available!")
-            #     rospy.signal_shutdown("Action server not available!")
-            # else:
             goal_reached = False
             while(not goal_reached):
                 inc_x = p.x - self.robot_pose.pose.pose.position.x
