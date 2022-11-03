@@ -150,14 +150,14 @@ class MarkovDecision():
 
                 angle_to_goal = atan2(inc_y, inc_x)
 
-                if angle_to_goal - theta > 0.1:
+                if angle_to_goal - theta > 0.2:
                     speed.linear.x = 0.0
-                    speed.angular.z = 0.2
-                elif angle_to_goal - theta < -0.1:
+                    speed.angular.z = 0.5
+                elif angle_to_goal - theta < -0.2:
                     speed.linear.x = 0.0
-                    speed.angular.z = -0.2
+                    speed.angular.z = -0.5
                 else:
-                    speed.linear.x = 0.2
+                    speed.linear.x = 0.26
                     speed.angular.z = 0.0
 
                 self.pub_cmd.publish(speed)
@@ -256,13 +256,14 @@ class MarkovDecision():
             if nextAction == 'g':
                 p = Point(
                     (next_x * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), \
-                    (next_y * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), 0.5)
+                    (next_y * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), 0.05)
+                path.points.append(p)
                 self.foundGoal = True
                 break
 
             p = Point(
                 (next_x * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), \
-                (next_y * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), 0.2)
+                (next_y * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8), 0.05)
 
             path.points.append(p)
 

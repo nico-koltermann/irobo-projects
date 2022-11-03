@@ -4,23 +4,25 @@ class Markov:
 
     def __init__(self):
 
-        self.print_result = False
-
+        self.print_result = True
+        self.enable_diagonal_cost = True
+        
         #########################
         # World costs
         self.goal_reward = 100
-        self.avoid_punish = -1000
+        self.avoid_punish = -100
         self.wall_cost = -10
         #########################
 
         ##########################
         # Sum should be 1.0
-        self.reward_value = 0.7
+        self.reward_value = 0.5
         self.reward_side = 0.1
         self.reward_back = 0.1
+        self.reward_diagonal = 0.05
         ##########################
 
-        self.gamma = 1
+        self.gamma = 0.9
 
         self.avoids = []
         self.goal = None
@@ -87,7 +89,7 @@ class Markov:
                 else:
                     ac, val = self.step(x, y)
                     next_action_map[x][y] = ac
-                    next_world[x][y] = pow(self.gamma, iteration) * val
+                    next_world[x][y] =  val
 
         self.world = next_world
         self.action_map = next_action_map
@@ -117,10 +119,15 @@ class Markov:
             left = self.world[x-1][y] * self.reward_value \
                 + self.world[x][y+1] * self.reward_side + self.world[x][y-1] * self.reward_side \
                 + self.world[x+1][y] * self.reward_back
-
         except e:
             print("Step went wrong:")
             print(e)
+
+        if self.enable_diagonal_cost:
+            up = self.addDiagonal(up, x, y)
+            right = self.addDiagonal(right, x, y)
+            down = self.addDiagonal(down, x, y)
+            left = self.addDiagonal(left, x, y)
 
         best = max(up, right, down, left)
         best_index = np.argmax(np.array([up, right, down, left]))
@@ -129,6 +136,12 @@ class Markov:
             return self.action_map[x][y], current
         else:
             return self.actions[best_index], best
+
+    def addDiagonal(self, val, x, y):
+        return val  + self.world[x+1][y+1] * self.reward_diagonal \
+                    + self.world[x+1][y-1] * self.reward_diagonal \
+                    + self.world[x-1][y+1] * self.reward_diagonal \
+                    + self.world[x-1][y-1] * self.reward_diagonal
 
     
     def test_markov(self):
