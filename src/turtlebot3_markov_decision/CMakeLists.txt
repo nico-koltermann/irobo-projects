@@ -6,6 +6,7 @@ find_package(catkin REQUIRED
     visualization_msgs
     nav_msgs
     geometry_msgs
+    std_msgs
 )
 
 catkin_package(CATKIN_DEPENDS nav_msgs)

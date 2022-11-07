@@ -9,6 +9,7 @@
 #include <pcl/point_types.h>
 #include <pcl/registration/icp.h>
 
+#include <nav_msgs/Odometry.h>
 #include <nav_msgs/OccupancyGrid.h>
 
 #include <sensor_msgs/PointCloud2.h>
@@ -34,9 +35,12 @@ public:
 private: 
     void occupency_grid_map_cb(const nav_msgs::OccupancyGrid& ogm);
     void occupency_scan_cb(const sensor_msgs::LaserScan& in_scan);
+    void odom_cb(const nav_msgs::Odometry& odom);
     void calculateLaser();
   
     sensor_msgs::LaserScan scan_save_;
+
+    nav_msgs::Odometry odom_;
 
     nav_msgs::OccupancyGrid map_;
     tf::TransformListener listener_;
@@ -46,8 +50,10 @@ private:
     ros::Publisher point_cloud_publisher_;
     ros::Publisher point_cloud_publisher2_;
     ros::Publisher point_cloud_publisher3_;
+
     ros::Subscriber sub_ogm_; 
     ros::Subscriber sub_scan_; 
+    ros::Subscriber sub_odom_; 
     
     bool loadMapOnce = false;
 };
@@ -55,16 +61,21 @@ private:
 TransformGridMap::TransformGridMap(ros::NodeHandle& nh) {
     sub_ogm_ = nh.subscribe("map", 1, &TransformGridMap::occupency_grid_map_cb, this);
     sub_scan_ = nh.subscribe("scan", 1, &TransformGridMap::occupency_scan_cb, this);
-    pub_ = nh.advertise<sensor_msgs::LaserScan> ("output", 1);
+    sub_odom_ = nh.subscribe("/odometry/filtered", 1, &TransformGridMap::odom_cb, this);
+
+    pub_ = nh.advertise<nav_msgs::Odometry> ("/scanmatch/odom", 1);
     point_cloud_publisher_ = nh.advertise<sensor_msgs::PointCloud2> ("/input", 100, false);
     point_cloud_publisher2_ = nh.advertise<sensor_msgs::PointCloud2> ("/input_reference", 100, false);
     point_cloud_publisher3_ = nh.advertise<sensor_msgs::PointCloud2> ("/final", 100, false);
 }
 
+void TransformGridMap::odom_cb(const nav_msgs::Odometry& odom) {
+    odom_ = odom;
+}
+
 void TransformGridMap::occupency_grid_map_cb(const nav_msgs::OccupancyGrid& ogm) {
     map_ = ogm;
 }
-
 
 void TransformGridMap::calculateLaser() {
     geometry_msgs::PointStamped ps;
@@ -104,6 +115,7 @@ void TransformGridMap::calculateLaser() {
 
     pcl::toROSMsg(cluster, pcl_map);
 
+    // Map and Scan
     point_cloud_publisher_.publish(pcl_map);
     point_cloud_publisher2_.publish(pcl_scan);
 
@@ -120,12 +132,30 @@ void TransformGridMap::calculateLaser() {
     pcl::PointCloud<pcl::PointXYZ> Final;
     icp.align(Final);
 
-    std::cout << icp.getFinalTransformation() << std::endl;
+    Eigen::Matrix4f transform = icp.getFinalTransformation();
 
+    // Corrected Scan
     pcl::toROSMsg(Final, pcl_scan);
-
     pcl_scan.header.frame_id = "base_scan"; 
     point_cloud_publisher3_.publish(pcl_scan);
+    
+    double r_x1 = transform.coeff(0, 0);
+    double r_x2 = transform.coeff(0, 1);
+    double t_x  = transform.coeff(0, 3);
+
+    double r_y1 = transform.coeff(1, 0);
+    double r_y2 = transform.coeff(1, 1);
+    double t_y  = transform.coeff(1, 3);
+
+    auto newOdom = odom_;
+
+    const double x = newOdom.pose.pose.position.x;
+    const double y = newOdom.pose.pose.position.y;
+
+    newOdom.pose.pose.position.x = x * r_x1 - y * r_x2 + t_x;
+    newOdom.pose.pose.position.y = x * r_y1 + y * r_y2 + t_y;
+
+    pub_.publish(newOdom);
 }
 
 void TransformGridMap::occupency_scan_cb(const sensor_msgs::LaserScan& in_scan) {
@@ -143,8 +173,6 @@ int main (int argc, char** argv)
   ros::init(argc, argv, "gridmap_to_pcl");
 
   ros::NodeHandle nh;
-
-    ROS_WARN_STREAM("INIT ASFOIASONG");
 
   TransformGridMap TransformGridMap(nh);
 
