@@ -27,27 +27,40 @@ from math import atan2
 class MarkovDecision():
 
     def __init__(self):
+
+        #########################
+        # Config
+        #########################
+
+        self.saveMaps = True
+
+        self.gamma = 1.0
+
+        self.waiting_between_iter = 0.0
+
+        self.goal_x = 45
+        self.goal_y = 45
+
+        self.avoid_x = 45
+        self.avoid_y = 40
+
+        self.avoid_x_2 = 45
+        self.avoid_y_2 = 40
+
+        self.offset = -10
+        self.cell_size = 0.3
+
+        self.max_iteration = 100
+
+        # Object for class and calculation
         self.markerArray = MarkerArray()
+
         self.gridMap = None
 
         self.markov = None
 
         self.finalMap = None
         self.actionMap = None
-        self.visit = None
-
-        self.goal_x = 32    
-        self.goal_y = 39
-
-        self.avoid_x = 28
-        self.avoid_y = 34
-
-        self.offset = -10
-        self.cell_size = 0.3
-
-        self.gamma = 2.0
-
-        self.iteration = 30
 
         self.path = None
         self.foundGoal = False
@@ -71,7 +84,7 @@ class MarkovDecision():
         pass
 
     def subscribe_to_topics(self):
-        self.sub_map = rospy.Subscriber("/map", OccupancyGrid, self.map_callback)
+        self.sub_map = rospy.Subscriber("/map_low_res", OccupancyGrid, self.map_callback)
         self.sub_pose = rospy.Subscriber("/odom", Odometry, self.odom_callback)
 
     def publish_to_topics(self):
@@ -104,26 +117,52 @@ class MarkovDecision():
    
     def calculateMarkov(self):
 
+        if self.robot_pose == None:
+            waitMax = 20
+            rospy.logwarn("WAIT FOR ROBOT POSE")
+            while self.robot_pose == None:
+                time.sleep(1)
+                waitMax = waitMax - 1
+                if waitMax < 0:
+                    rospy.logwarn("TIME OUT - RETURN")
+                    return
+
         self.markov = markovSolver.Markov()
 
         self.markov.setAvoid(self.avoid_x, self.avoid_y)
+        self.markov.setAvoid(self.avoid_x_2, self.avoid_y_2)
         self.markov.setGoal(self.goal_x, self.goal_y)
 
         self.markov.setWorld(self.finalMap)
 
+        self.markov.setGamma(self.gamma)
+
         self.markov.init()
 
-        for _ in range(0, self.iteration):
-            self.makeIteration()
-            time.sleep(0.1)
+        for i in range(0, self.max_iteration):
+            com = self.finalMap.copy()
+            self.makeIteration(i)
 
-        ma = self.markov.getWorldMap()
-        ac = self.markov.getActionMap()
-        self.saveMap(ma)
-        self.saveActionMap(ac)
+            if np.array_equal(com, self.finalMap):
+                print("CONVERGED!")
+                print("Iterations: " + str(i))
+                break
+
+            time.sleep(self.waiting_between_iter)
+
+        print("MAP FINAL")
+
+        if self.saveMaps:
+            ma = self.markov.getWorldMap()
+            ac = self.markov.getActionMap()
+            self.saveMap(ma)
+            self.saveActionMap(ac)
 
         if self.foundGoal:
-            self.move_robot()
+            # self.move_robot()
+            pass
+        else: 
+            rospy.logwarn("ERROR: CANNOT MOVE ROBOT!")
     
     def move_robot(self):
         speed = Twist()
@@ -150,14 +189,14 @@ class MarkovDecision():
 
                 angle_to_goal = atan2(inc_y, inc_x)
 
-                if angle_to_goal - theta > 0.2:
+                if angle_to_goal - theta > 0.3:
                     speed.linear.x = 0.0
-                    speed.angular.z = 0.5
-                elif angle_to_goal - theta < -0.2:
+                    speed.angular.z = 0.2
+                elif angle_to_goal - theta < -0.3:
                     speed.linear.x = 0.0
-                    speed.angular.z = -0.5
+                    speed.angular.z = -0.2
                 else:
-                    speed.linear.x = 0.26
+                    speed.linear.x = 0.15
                     speed.angular.z = 0.0
 
                 self.pub_cmd.publish(speed)
@@ -267,6 +306,9 @@ class MarkovDecision():
 
             path.points.append(p)
 
+            if nextAction == 'w':
+                break
+
             action = self.actions[nextAction]
             next_x = next_x + action[0]
             next_y = next_y + action[1]
@@ -300,11 +342,14 @@ class MarkovDecision():
             for y in range(0, self.gridMap.info.height):
                 dataPoint = self.gridMap.data[y * self.gridMap.info.width + x] 
 
-                if dataPoint == 0:
+                if dataPoint == 0 or x == self.goal_x and y == self.goal_y:
                     marker = self.getEmptyMarker(1)
                     arrow = self.getEmptyMarker(0)
 
-                    direction = self.getBestDirection(x, y)
+                    try:
+                        direction = self.getBestDirection(x, y)
+                    except:
+                        pass
 
                     start = Point()
                     start.x = (x * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8)
@@ -340,12 +385,12 @@ class MarkovDecision():
                         marker.color.g = 1.0
                         marker.color.b = 0.0
                         specialPoint = True
-                    elif x == robot_point[0] and y == robot_point[1]:
-                        marker.color.r = 0.0
-                        marker.color.g = 0.0
-                        marker.color.b = 1.0
-                        specialPoint = True
-                    elif x == self.avoid_x and y == self.avoid_y:
+                    # elif x == robot_point[0] and y == robot_point[1]:
+                    #     marker.color.r = 0.0
+                    #     marker.color.g = 0.0
+                    #     marker.color.b = 1.0
+                    #     specialPoint = True
+                    elif x == self.avoid_x and y == self.avoid_y or (x == self.avoid_x_2 and y == self.avoid_y_2):
                         marker.color.r = 0.8
                         marker.color.g = 0.0
                         marker.color.b = 0.0

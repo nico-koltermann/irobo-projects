@@ -5,7 +5,8 @@
     <include file="$(env ROBOT_BRINGUP_PATH)/machines/$(arg machine).machine" />
 
     <arg name="laser"/>
-    <arg name="map" />
+    <!-- <arg name="map" /> -->
+    <arg name="map" default="$(find turtlebot3_custom)/maps/lab_full_v2.yaml"/>
     <arg name="robot_init_x" default="$(optenv ROBOT_INIT_X 0)"/>
     <arg name="robot_init_y" default="$(optenv ROBOT_INIT_Y 0)"/>
     <arg name="robot_init_phi" default="$(optenv ROBOT_INIT_PHI 0)"/>

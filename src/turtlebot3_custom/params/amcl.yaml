@@ -6,27 +6,27 @@
 #
   
 # Overall filter parameters
-min_particles:        1000      # 100,500
-max_particles:        3000     # 5000
-kld_err:              0.02      # 0.01, 0.05
+min_particles:        3000      # 100,500
+max_particles:        5000     # 5000
+kld_err:              0.05      # 0.01, 0.05
 kld_z:                0.99      # 0.99
 update_min_d:         -1.0       # 0.2
 update_min_a:         -1.0    # 0.5235
-resample_interval:    2       # 2, 1
-transform_tolerance:  0.5       # 0.1, 0.2
+resample_interval:    1       # 2, 1
+transform_tolerance:  0.1       # 0.1, 0.2
 recovery_alpha_slow:  0.0     # 0.0, 0.0, 0.001
 recovery_alpha_fast:  0.0       # 0.0, 0.0, 0.1
-initial_pose_x:       -2.0   # 0.0
-initial_pose_y:       -0.5       # 0.0
+initial_pose_x:       0.0   # 0.0
+initial_pose_y:       0.0       # 0.0
 initial_pose_a:       0.0       # 0.0
-initial_cov_xx:       3.0      # 0.25
-initial_cov_yy:       3.0      # 0.25
+initial_cov_xx:       5.0      # 0.25
+initial_cov_yy:       5.0      # 0.25
 initial_cov_aa:       0.06853   # 0.06853 
 gui_publish_rate:     -1.0      # -1.0, 10
 save_pose_rate:       0.5      # 0.5
 use_map_topic:        true      # false
-first_map_only:       false     # false
-selective_resampling: true
+first_map_only:       true     # false
+selective_resampling: false
 
 # Laser Model Parameters 
 laser_min_range:            -1.0   # -1.0
@@ -42,13 +42,13 @@ laser_likelihood_max_dist:  2.0    # 2.0
 laser_model_type:           likelihood_field
 
 # Odometery model parameters
-odom_model_type:  diff
-odom_alpha1:      0.1   # 0.2 rr
-odom_alpha2:      0.1   # 0.2 rt
-odom_alpha3:      0.1    # 0.2,0.8 tt
-odom_alpha4:      0.1   # 0.2 tr
-odom_alpha5:      0.1    # 0.2,0.1
+odom_model_type:  diff-corrected
+odom_alpha1:      2.0   # 0.2 rr
+odom_alpha2:      2.0   # 0.2 rt
+odom_alpha3:      2.0    # 0.2,0.8 tt
+odom_alpha4:      2.0   # 0.2 tr
+odom_alpha5:      2.0    # 0.2,0.1
 odom_frame_id:    odom 
-base_frame_id:    base_footprint 
+base_frame_id:    base_footprint
 global_frame_id:  map 
 tf_broadcast: true

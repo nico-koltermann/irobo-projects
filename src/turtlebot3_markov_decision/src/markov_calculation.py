@@ -4,7 +4,7 @@ class Markov:
 
     def __init__(self):
 
-        self.print_result = True
+        self.print_result = False
         self.enable_diagonal_cost = True
         
         #########################
@@ -16,13 +16,21 @@ class Markov:
 
         ##########################
         # Sum should be 1.0
-        self.reward_value = 0.5
-        self.reward_side = 0.1
-        self.reward_back = 0.1
+        # self.reward_value = 0.9
+        # self.reward_side = 0.05
+        # self.reward_back = 0.0
+        # self.reward_diagonal = 0.0
+        ##########################
+
+        ##########################
+        # Sum should be 1.0
+        self.reward_value = 0.6
+        self.reward_side = 0.075
+        self.reward_back = 0.05
         self.reward_diagonal = 0.05
         ##########################
 
-        self.gamma = 0.9
+        self.gamma = None
 
         self.avoids = []
         self.goal = None
@@ -36,6 +44,9 @@ class Markov:
 
     def getWorldMap(self):
         return self.world
+
+    def setGamma(self, g):
+        self.gamma = g
 
     def setGoal(self, x, y):
         self.goal = (x ,y)
@@ -72,7 +83,7 @@ class Markov:
             print(self.action_map)
             print('####################################')
 
-    def doRewardIteration(self, iteration=1):
+    def doRewardIteration(self, iteration):
         next_action_map = self.action_map.copy()
         next_world = self.world.copy()
         for x in range(0, self.world.shape[0]):
@@ -89,7 +100,7 @@ class Markov:
                 else:
                     ac, val = self.step(x, y)
                     next_action_map[x][y] = ac
-                    next_world[x][y] =  val
+                    next_world[x][y] =(val  * pow(self.gamma, iteration))
 
         self.world = next_world
         self.action_map = next_action_map
@@ -147,8 +158,18 @@ class Markov:
     def test_markov(self):
         self.init()
 
-        for i in range(1, 10):
+        self.gamma = 1.0
+        self.print_result = True
+
+        for i in range(1, 100):
+            world = self.world.copy()
             self.doRewardIteration(i)
+            if np.array_equal(world, self.world):
+                print("CONVERGED!")
+                print("Iterations: " + str(i))
+                break
+
+        print("Reached max iterations")
 
 if __name__ == "__main__":
     m = Markov()
@@ -157,12 +178,15 @@ if __name__ == "__main__":
             [-1, -1, -1, -1, -1, -1],
             [-1, 0, 0, 0, 0, -1],
             [-1, 0, 0, 0, 0, -1],
+            [-1, 0, 0, -1, 0, -1],
+            [-1, 0, 0, -1, 0, -1],
+            [-1, 0, -1, -1, 0, -1],
             [-1, 0, 0, 0, 0, -1],
             [-1, 0, 0, 0, 0, -1],
             [-1, -1, -1, -1, -1, -1]
     ]))
 
     m.setGoal(2,4)
-    m.setAvoid(4,3)
+    # m.setAvoid(4,3)
 
     m.test_markov()

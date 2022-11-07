@@ -2,7 +2,7 @@
 
 YAML_PATH="./yaml"
 
-TOPIC="cmd_vel"
+TOPIC="amcl_pose"
 
 LAST_BAG=$(find bags/ -printf '%T+ %p\n' | sort -r | head -n1 | cut -d ' ' -f2 | cut -b 6-)
 
@@ -37,7 +37,7 @@ FILENAME="${ROSBAG_NAME%.*}"
 rosbag info -y "bags/$ROSBAG_NAME" >> "$YAML_PATH/$filename-info.yaml"
 
 python3 ros_readbagfile.py  ./bags/$ROSBAG_NAME "/$TOPIC" | tee $YAML_PATH/$FILENAME-$TOPIC.yaml
-python3 scripts/plot_cmd.py -f $FILENAME-$TOPIC.yaml
+# python3 scripts/plot_cmd.py -f $FILENAME-$TOPIC.yaml
 # python3 scripts/plot_odom.py -f $FILENAME-$TOPIC.yaml
 
 

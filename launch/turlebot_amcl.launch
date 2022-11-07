@@ -8,7 +8,8 @@
   <arg name="model" default="$(arg TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
 
   <!-- <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/> -->
-  <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/>
+  <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/> -->
+  <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobo_map.yaml"/>
 
   <!-- Turtlebot3 -->
   <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
@@ -19,7 +20,8 @@
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
   <!-- Gazebo Simulator -->
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world_robo.launch"/>
+  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/> -->
   
   <!-- Teleoperation -->
   <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
@@ -32,7 +34,14 @@
   <!-- Rviz -->
   <group if="$(arg open_rviz)"> 
     <node pkg="rviz" type="rviz" name="rviz" required="true"
-          args="-d $(find turtlebot3_navigation)/rviz/turtlebot3_navigation.rviz"/>
+          args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_amcl.rviz"/>
   </group>
+
+  <node name="turtlebot3_viz" pkg="turtlebot3_viz" type="turtlebot3_viz_amcl_gt.py" output="screen"></node>
+
+  <arg name="amcl_pose" default="true" />
+  <node pkg="rosbag" type="record" name="record_odom"
+    args="record /amcl_pose /ground_truth/state -o $(find evaluation)/bags/amcl_pose.bag"
+    if="$(arg amcl_pose)" />
 
 </launch>
