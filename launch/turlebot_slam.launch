@@ -4,7 +4,9 @@
   <arg name="enable_rviz" default="true" />
   <arg name="model" default="waffle" />
 
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  <!--<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>-->
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_irobo.launch"/>
+  <!--<include file="$(find turtlebot3_gazebo)/launch/turtlebot3_irobo2.launch"/>-->
   <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
 
   <!-- <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization.launch"/> -->
