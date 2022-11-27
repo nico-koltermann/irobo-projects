@@ -87,12 +87,14 @@ void TransformGridMap::calculateLaser() {
     ps.header.stamp = ros::Time::now();
     ps.header.frame_id = map_.header.frame_id;
 
+    std::string base_frame = "base_link";
+
     PointCloud cluster;
     cluster.height  = 1;
     cluster.is_dense = true;
-    cluster.header.frame_id = "base_scan";
+    cluster.header.frame_id = base_frame;
 
-    projector_.transformLaserScanToPointCloud("base_scan", scan_save_, pcl_scan, listener_);
+    projector_.transformLaserScanToPointCloud(base_frame, scan_save_, pcl_scan, listener_);
 
     for (int width = 0; width < map_.info.width; ++width)
     {
@@ -102,7 +104,7 @@ void TransformGridMap::calculateLaser() {
             {
                 ps.point.x = width * map_.info.resolution - 10;
                 ps.point.y = height * map_.info.resolution - 10;
-                listener_.transformPoint("base_scan", ps , out_ps);
+                listener_.transformPoint(base_frame, ps , out_ps);
 
                 pcl::PointXYZ pclP;
                 pclP.x = out_ps.point.x;
@@ -136,7 +138,7 @@ void TransformGridMap::calculateLaser() {
 
     // Corrected Scan
     pcl::toROSMsg(Final, pcl_scan);
-    pcl_scan.header.frame_id = "base_scan"; 
+    pcl_scan.header.frame_id = "map"; 
     point_cloud_publisher3_.publish(pcl_scan);
     
     double r_x1 = transform.coeff(0, 0);

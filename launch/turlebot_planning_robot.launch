@@ -55,6 +55,8 @@
           args="-d $(arg rviz_file)"/>
   </group>
 
+  <node name="turtlebot3_viz" pkg="turtlebot3_viz" type="turtlebot3_viz_pos.py" output="screen"></node>
+
    <node pkg="rosbag" type="record" name="record_cmd"
        args="record /cmd_vel -o $(find evaluation)/bags/real_robot_.bag"
        if="$(arg record)" />

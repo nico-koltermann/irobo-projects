@@ -22,7 +22,8 @@ class Visualization():
 
         self.odom = None
 
-        self.gt_topic = "/ground_truth/state"
+        self.gt_topic = "/odom"
+        # self.gt_topic = "/ground_truth/state"
         self.ekf_topic = "/odometry/filtered"
         self.scanmatch_topic = "/scanmatch/odom"
         self.odom_topic = "/odom"
@@ -80,24 +81,33 @@ class Visualization():
         return yaw
 
     def run(self):
-        if self.gt != None and self.ekf != None and self.scanmatch != None:
+        if self.gt != None and self.ekf != None:
+
             a = np.array([self.gt.pose.pose.position.x, self.gt.pose.pose.position.y])
             b = np.array([self.ekf.pose.pose.position.x, self.ekf.pose.pose.position.y])
-            c = np.array([self.scanmatch.pose.pose.position.x, self.scanmatch.pose.pose.position.y])
             d = np.array([self.odom.pose.pose.position.x, self.odom.pose.pose.position.y])
 
             dist_ab = np.linalg.norm(a-b)
-            dist_ac = np.linalg.norm(a-c)
             dist_ad = np.linalg.norm(a-d)
 
             gt_yaw = self.getYaw(self.gt)
             ekf_yaw = self.getYaw(self.ekf)
-            sm_yaw = self.getYaw(self.scanmatch)
             odom_yaw = self.getYaw(self.odom)
+
+
+            if not self.scanmatch == None:
+                c = np.array([self.scanmatch.pose.pose.position.x, self.scanmatch.pose.pose.position.y])
+                dist_ac = np.linalg.norm(a-c)
+                sm_yaw = self.getYaw(self.scanmatch)
+                self.scanmatch_arr.append(Point(self.scanmatch.pose.pose.position.x, self.scanmatch.pose.pose.position.y, 0))
+                error.data = dist_ac
+                self.pub_error_sm.publish(error)
+                error.data = ( gt_yaw - sm_yaw ) * 180 / math.pi
+                self.pub_error_sm.publish(error)
+                self.sm_marker.points = self.scanmatch_arr
 
             self.gt_arr.append(Point(self.gt.pose.pose.position.x, self.gt.pose.pose.position.y, 0))
             self.ekf_arr.append(Point(self.ekf.pose.pose.position.x, self.ekf.pose.pose.position.y, 0))
-            self.scanmatch_arr.append(Point(self.scanmatch.pose.pose.position.x, self.scanmatch.pose.pose.position.y, 0))
 
             error = Float32()
 
@@ -106,11 +116,6 @@ class Visualization():
             error.data = ( gt_yaw - ekf_yaw ) * 180 / math.pi
             self.pub_error_or.publish(error)
 
-            error.data = dist_ac
-            self.pub_error_sm.publish(error)
-            error.data = ( gt_yaw - sm_yaw ) * 180 / math.pi
-            self.pub_error_sm.publish(error)
-
             error.data = dist_ad
             self.pub_error_od.publish(error)
             error.data = ( gt_yaw - odom_yaw ) * 180 / math.pi
@@ -118,7 +123,6 @@ class Visualization():
 
             self.gt_marker.points = self.gt_arr
             self.ekf_marker.points = self.ekf_arr
-            self.sm_marker.points = self.scanmatch_arr
 
             self.pub_gt.publish(self.gt_marker)
             self.pub_ekf.publish(self.ekf_marker)

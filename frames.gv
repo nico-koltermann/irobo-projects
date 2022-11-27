@@ -1,0 +1,12 @@
+digraph G {
+"mocap" -> "odom"[label="Broadcaster: /odom_wrt_map_tf2_11\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1539699428.280 sec old)\nBuffer length: 0.000 sec\n"];
+"odom" -> "base_link"[label="Broadcaster: /robot_localization_ekf_node_odom\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1539699428.280 sec old)\nBuffer length: 0.000 sec\n"];
+"mocap" -> "mocap_laser_link"[label="Broadcaster: /play_1667838765357721988\nAverage rate: 120.415 Hz\nMost recent transform: 1539699428.281 ( -0.001 sec old)\nBuffer length: 4.916 sec\n"];
+"odom" -> "base_footprint"[label="Broadcaster: /play_1667838765357721988\nAverage rate: 26.597 Hz\nMost recent transform: 1539699428.265 ( 0.015 sec old)\nBuffer length: 4.888 sec\n"];
+"base_link" -> "wheel_left_link"[label="Broadcaster: /play_1667838765357721988\nAverage rate: 20.868 Hz\nMost recent transform: 1539699428.265 ( 0.015 sec old)\nBuffer length: 4.888 sec\n"];
+"base_link" -> "wheel_right_link"[label="Broadcaster: /play_1667838765357721988\nAverage rate: 20.868 Hz\nMost recent transform: 1539699428.265 ( 0.015 sec old)\nBuffer length: 4.888 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1539699428.280"[ shape=plaintext ] ;
+ }->"mocap";
+}

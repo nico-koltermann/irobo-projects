@@ -62,15 +62,17 @@ def load_data():
     index = 0
     for d in data:
         key, val = d
-        if (index % 3 == 0):
-            if -10 < val < 10:
-                v_ekf.append(val)
-        if (index % 3 == 1):
-            if -10 < val < 10:
-                v_sm.append(val)      
-        if (index % 3 == 2):
-            if -10 < val < 10:
-                v_odom.append(val)      
+        # if index < 3000: 
+        if -10 < val < 10 and abs(val) > 0.2:
+            v_ekf.append(val)
+        # if (index % 3 == 1):
+        #     if -10 < val < 10:
+        #         if val > 1.0:
+        #             v_sm.append(val)      
+        # if (index % 3 == 2):
+        #     if -10 < val < 10:
+        #         if val > 1.0:
+        #             v_odom.append(val)      
         index = index + 1
 
     return v_ekf, v_sm, v_odom
@@ -91,8 +93,8 @@ def plot_line(v, name, color, x_label="", y_label=""):
     fig, ax = plt.subplots(figsize=(10, 3))
 
     hertz = 10
-    X = np.arange(0,len(v)) / hertz
-    ax.plot(X, v, "b", linewidth=1)
+    X = np.arange(0,len(v)) / 10
+    ax.plot(X, np.array(np.absolute(v)) / 50 , "b", linewidth=1)
 
     x_ax = np.zeros(len(v))
 
@@ -102,9 +104,9 @@ def plot_line(v, name, color, x_label="", y_label=""):
     ax.set_xlabel(x_label)
     ax.set_ylabel(y_label)
 
-    avg = np.round(np.average(np.abs(v)), 2)
+    avg = np.round(np.average(np.absolute(v)), 2) / 50
 
-    plt.title(name + " average: "  + str(avg) + "[mm]")
+    plt.title(name + " average: "  + str(avg) + "[m]")
 
     plt.savefig(final_path + name + '_' + thismodule.file_name + '.pgf', bbox_inches = 'tight')
     plt.savefig(final_path + name + '_' + thismodule.file_name +'.png',dpi=500, bbox_inches = 'tight')
@@ -130,6 +132,6 @@ if __name__ == '__main__':
 
     v_ekf, v_sm, v_odom = load_data()
 
-    plot_line(v_ekf, "Ekf Error", "r", "Time [s]", "Error [mm]")
-    plot_line(v_sm, "Scan Match Error", "r", "Time [s]", "Error [mm]")
-    plot_line(v_odom, "Odom Error", "r", "Time [s]", "Error [mm]")
+    # plot_line(v_ekf, "Ekf Error", "r", "Time [s]", "Error [m]")
+    plot_line(v_ekf, "Scan Match Error", "r", "Time [s]", "Error [m]")
+    # plot_line(v_odom, "Odom Error", "r", "Time [s]", "Error [m]")

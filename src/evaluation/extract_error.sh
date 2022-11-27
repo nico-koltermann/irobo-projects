@@ -36,7 +36,7 @@ fi
 
 FILENAME="${ROSBAG_NAME%.*}"
 
-python3 ros_readbagfile.py  ./bags/$ROSBAG_NAME "/$TOPIC1" "/$TOPIC2" "/$TOPIC3" | tee $YAML_PATH/$FILENAME.yaml
+python3 ros_readbagfile.py  ./bags/$ROSBAG_NAME "/$TOPIC2" | tee $YAML_PATH/$FILENAME.yaml
 python3 scripts/plot_error.py -f $FILENAME.yaml
 
 

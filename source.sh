@@ -2,8 +2,8 @@
 
 CATKIN_SHELL=bash
 
-ROBOT_NAME=4
-ROBOT_NUMBER=14
+ROBOT_NAME=5
+ROBOT_NUMBER=15
 
 export LAB_ROOT=$( cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 

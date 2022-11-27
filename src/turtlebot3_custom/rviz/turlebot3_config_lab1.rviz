@@ -4,7 +4,6 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /scanmatch1
         - /scanmatch1/Shape1
       Splitter Ratio: 0.5
     Tree Height: 287
@@ -201,6 +200,14 @@ Visualization Manager:
         "": true
       Queue Size: 100
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /turtlebot3/polygon/sm
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
     - Angle Tolerance: 0.009999999776482582
       Class: rviz/Odometry
       Covariance:
@@ -253,7 +260,7 @@ Visualization Manager:
           Scale: 1
           Value: false
         Value: true
-      Enabled: true
+      Enabled: false
       Keep: 1
       Name: Pos
       Position Tolerance: 0.10000000149011612
@@ -270,7 +277,7 @@ Visualization Manager:
         Value: Arrow
       Topic: /odom
       Unreliable: false
-      Value: true
+      Value: false
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -306,6 +313,41 @@ Visualization Manager:
       Topic: /scanmatch/odom
       Unreliable: false
       Value: true
+    - Angle Tolerance: 0.10000000149011612
+      Class: rviz/Odometry
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: false
+      Keep: 100
+      Name: Odometry
+      Position Tolerance: 0.10000000149011612
+      Queue Size: 10
+      Shape:
+        Alpha: 1
+        Axes Length: 1
+        Axes Radius: 0.10000000149011612
+        Color: 255; 25; 0
+        Head Length: 0.30000001192092896
+        Head Radius: 0.10000000149011612
+        Shaft Length: 1
+        Shaft Radius: 0.05000000074505806
+        Value: Arrow
+      Topic: /ground_truth/state
+      Unreliable: false
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -334,7 +376,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.840998888015747
+      Distance: 2.9554309844970703
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -342,17 +384,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.8378385901451111
-        Y: -0.40245917439460754
-        Z: -0.6252835988998413
+        X: -0.7033684253692627
+        Y: 1.1395118236541748
+        Z: -0.3410009443759918
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8747966885566711
+      Pitch: 1.5347963571548462
       Target Frame: <Fixed Frame>
-      Yaw: 3.6135849952697754
+      Yaw: 3.1185858249664307
     Saved: ~
 Window Geometry:
   Displays:
@@ -372,5 +414,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1399
-  X: 708
-  Y: 148
+  X: 521
+  Y: 111

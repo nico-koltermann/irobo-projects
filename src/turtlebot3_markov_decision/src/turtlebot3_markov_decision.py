@@ -11,7 +11,7 @@ from random import random
 import sys
 import time
 
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, PoseWithCovarianceStamped
 from nav_msgs.msg import OccupancyGrid, GridCells, Odometry
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -38,19 +38,21 @@ class MarkovDecision():
 
         self.waiting_between_iter = 0.0
 
-        self.goal_x = 45
-        self.goal_y = 45
+        # self.goal_x = 45
+        # self.goal_y = 45
 
-        self.avoid_x = 45
-        self.avoid_y = 40
+        self.goal_x = 39
+        self.goal_y = 48
+        self.avoid_x = 42
+        self.avoid_y = 47
 
-        self.avoid_x_2 = 45
-        self.avoid_y_2 = 40
+        self.avoid_x_2 = self.avoid_x
+        self.avoid_y_2 = self.avoid_y
 
         self.offset = -10
         self.cell_size = 0.3
 
-        self.max_iteration = 100
+        self.max_iteration = 50
 
         # Object for class and calculation
         self.markerArray = MarkerArray()
@@ -85,7 +87,7 @@ class MarkovDecision():
 
     def subscribe_to_topics(self):
         self.sub_map = rospy.Subscriber("/map_low_res", OccupancyGrid, self.map_callback)
-        self.sub_pose = rospy.Subscriber("/odom", Odometry, self.odom_callback)
+        self.sub_pose = rospy.Subscriber("/amcl_pose", PoseWithCovarianceStamped, self.odom_callback)
 
     def publish_to_topics(self):
         self.pub_viz = rospy.Publisher("/viz/test", MarkerArray, queue_size=1)
@@ -93,6 +95,8 @@ class MarkovDecision():
 
     def  odom_callback(self, msg):
         self.robot_pose = msg
+        self.robo_x = self.robot_pose.pose.pose.position.x
+        self.robo_y = self.robot_pose.pose.pose.position.y
 
     def  map_callback(self, msg):
         
@@ -113,6 +117,9 @@ class MarkovDecision():
 
         self.finalMap = np.array(finalMap)
 
+        self.calculateMarkov()
+        self.goal_x = 39
+        self.goal_y = 48
         self.calculateMarkov()
    
     def calculateMarkov(self):
@@ -159,7 +166,7 @@ class MarkovDecision():
             self.saveActionMap(ac)
 
         if self.foundGoal:
-            # self.move_robot()
+            self.move_robot()
             pass
         else: 
             rospy.logwarn("ERROR: CANNOT MOVE ROBOT!")
@@ -191,12 +198,12 @@ class MarkovDecision():
 
                 if angle_to_goal - theta > 0.3:
                     speed.linear.x = 0.0
-                    speed.angular.z = 0.2
+                    speed.angular.z = 0.5
                 elif angle_to_goal - theta < -0.3:
                     speed.linear.x = 0.0
-                    speed.angular.z = -0.2
+                    speed.angular.z = -0.5
                 else:
-                    speed.linear.x = 0.15
+                    speed.linear.x = 0.20
                     speed.angular.z = 0.0
 
                 self.pub_cmd.publish(speed)
@@ -275,7 +282,7 @@ class MarkovDecision():
                     x_coord = (x * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8)
                     y_coord = (y * self.gridMap.info.resolution) + self.offset + (self.cell_size * 0.8)
 
-                    dist = math.dist([x_coord, y_coord], [self.robot_pose.pose.pose.position.x, self.robot_pose.pose.pose.position.y])
+                    dist = math.dist([x_coord, y_coord], [self.robo_x, self.robo_y])
 
                     if dist < closest:
                         robot_point = (x, y)
@@ -385,11 +392,11 @@ class MarkovDecision():
                         marker.color.g = 1.0
                         marker.color.b = 0.0
                         specialPoint = True
-                    # elif x == robot_point[0] and y == robot_point[1]:
-                    #     marker.color.r = 0.0
-                    #     marker.color.g = 0.0
-                    #     marker.color.b = 1.0
-                    #     specialPoint = True
+                    elif x == robot_point[0] and y == robot_point[1]:
+                        marker.color.r = 0.0
+                        marker.color.g = 0.0
+                        marker.color.b = 1.0
+                        specialPoint = True
                     elif x == self.avoid_x and y == self.avoid_y or (x == self.avoid_x_2 and y == self.avoid_y_2):
                         marker.color.r = 0.8
                         marker.color.g = 0.0

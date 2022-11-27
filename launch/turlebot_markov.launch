@@ -4,14 +4,15 @@
   <arg name="enable_rviz" default="true" />
   <arg name="model" default="waffle" />
   <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobot_new_map_v1.yaml" />
-  <arg name="map_file_low_res" default="$(find turtlebot3_custom)/maps/irobot_new_map_v1.yaml" />
+  <!-- <arg name="map_file_low_res" default="$(find turtlebot3_custom)/maps/irobot_new_map_v1.yaml" /> -->
+  <arg name="map_file_low_res" default="$(find turtlebot3_custom)/maps/lab_full_v2.yaml" />
 
   <!-- Turtlebot3 -->
   <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
     <arg name="model" value="$(arg model)" />
   </include>
 
-    <!-- AMCL -->
+  <!-- AMCL -->
   <node pkg="amcl" type="amcl" name="amcl" >
     <rosparam command="load" file="$(find turtlebot3_custom)/params/amcl.yaml" />
   </node> 

@@ -111,7 +111,7 @@ def plot_line(data, name, color, x_label="", y_label=""):
     fig, ax = plt.subplots(figsize=(10, 3))
 
     X = np.arange(0,len(data))
-    X_l = X / 6
+    X_l = X / 10
 
     ax.plot(X_l,data, color, linewidth=1)
     x_ax = np.zeros(len(data))
@@ -146,5 +146,5 @@ if __name__ == '__main__':
 
     dist, cov = load_data()
 
-    plot_line(dist, "Error", "r")
+    plot_line(dist, "Error", "r", "Time [s]", "Error [m]") 
     plot_line(cov, "Covariance", "g")

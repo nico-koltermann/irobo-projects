@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <launch>
 
-
   <!-- Arguments -->
   <arg name="open_rviz" default="true"/>
   <arg name="TURTLEBOT3_MODEL" default="waffle_pi"/>
   <arg name="model" default="$(arg TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
 
-  <!-- <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/> -->
+  <arg name="map_file" default="$(find turtlebot3_navigation)/maps/map.yaml"/>
   <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/turtle_gmap_28092022.yaml"/> -->
-  <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobo_map.yaml"/>
+  <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobo_map.yaml"/> -->
+  <!-- <arg name="map_file" default="$(find turtlebot3_custom)/maps/lab_full_v2.yaml"/> -->
 
   <!-- Turtlebot3 -->
   <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
@@ -20,7 +20,7 @@
   <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
 
   <!-- Gazebo Simulator -->
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world_robo.launch"/>
+  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world_robo.launch"/> -->
   <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/> -->
   
   <!-- Teleoperation -->
