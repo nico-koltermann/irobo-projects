@@ -49,3 +49,9 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+*.pgf
+*.png
+*.bag
+
+src/evaluation/yaml

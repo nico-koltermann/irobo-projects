@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>turtlebot3_viz_scan_match</name>
+  <name>turtlebot3_cmd_smoother</name>
   <version>0.0.1</version>
   <description>Add custom launch files/msgs and rviz configs in this package</description>
 
@@ -11,8 +11,6 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <depend>visualization_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
 
 </package>

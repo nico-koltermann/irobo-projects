@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="enable_rviz" default="true"/>
+
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/>
+  <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization.launch"/>
+
+  <include file="$(find turtle3_gridmap_to_pcl)/launch/turtle3_gridmap_to_pcl.launch"/>
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_scan_tf" args="0 0 0 0 0 0 map base_link" />
+
+  <!-- Launch rviz visualization-->
+  <group if="$(arg enable_rviz)">
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_lab1.rviz" />
+  </group>
+
+  <node name="turtlebot3_viz" pkg="turtlebot3_viz" type="turtlebot3_viz_ekf_gt.py" output="screen"></node>
+
+</launch> 

@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(turtlebot3_viz_scan_match)
+project(turtlebot3_markov_decision)
 
 find_package(catkin REQUIRED 
     COMPONENTS
     visualization_msgs
     nav_msgs
-    sensor_msgs
+    geometry_msgs
+    std_msgs
 )
 
 catkin_package(CATKIN_DEPENDS nav_msgs)

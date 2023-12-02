@@ -1,0 +1,6 @@
+<launch>
+    <node name="turtlebot3_send_nav_goals_node" pkg="turtlebot3_send_nav_goals" type="turtlebot3_send_nav_goals" output="screen">
+        <param name="cost_threshold" value="10.0" /> 
+    </node>
+</launch>
+

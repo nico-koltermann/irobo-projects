@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>turtlebot3_markov_decision</name>
+  <version>0.0.1</version>
+  <description>Add custom launch files/msgs and rviz configs in this package</description>
+
+  <!-- Maintainer -->
+  <maintainer email="nico.koltermann@tu-dortmund.de">Nico Koltermann</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>visualization_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+
+</package>

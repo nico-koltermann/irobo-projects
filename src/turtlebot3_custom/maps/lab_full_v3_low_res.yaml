@@ -1,0 +1,7 @@
+image: lab_full_v3_low_res.pgm
+resolution: 0.300000
+origin: [-9.900000, -9.900000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

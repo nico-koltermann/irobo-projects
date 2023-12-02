@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="enable_rviz" default="true" />
+  <arg name="model" default="waffle" />
+  <arg name="map_file" default="$(find turtlebot3_custom)/maps/irobot_new_map_v1.yaml" />
+  <arg name="map_file_low_res" default="$(find turtlebot3_custom)/maps/irobot_new_map_v1.yaml" />
+
+  <!-- Turtlebot3 -->
+  <include file="$(find turtlebot3_bringup)/launch/turtlebot3_remote.launch">
+    <arg name="model" value="$(arg model)" />
+  </include>
+
+    <!-- AMCL -->
+  <node pkg="amcl" type="amcl" name="amcl" >
+    <rosparam command="load" file="$(find turtlebot3_custom)/params/amcl.yaml" />
+  </node> 
+
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world_robo.launch"/>
+  <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch"/> -->
+
+  <!-- <include file="$(find turtlebot3_custom)/launch/turtlebot3_localization.launch"/> -->
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="map_scan_tf" args="0 0 0 0 0 0 map base_link" />
+
+  <node pkg="map_server" name="map_server" type="map_server" args="$(arg map_file)"/>
+
+  <node pkg="map_server" name="map_server_low_res" type="map_server" args="$(arg map_file_low_res) /map:=/map_low_res /map_metadata:=/map_file_low_res_metadata"/>
+
+  <!-- <node name="turtlebot3_markov_decision" pkg="turtlebot3_markov_decision" type="turtlebot3_markov_decision.py" output="screen"></node> -->
+  
+  <!-- Launch rviz visualization-->
+  <group if="$(arg enable_rviz)">
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find turtlebot3_custom)/rviz/turlebot3_config_markov.rviz" />
+  </group>
+
+</launch>
