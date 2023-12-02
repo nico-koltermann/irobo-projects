@@ -5,7 +5,7 @@ The goal is to learn fundamentals of robotics, while using ROS.
 
 In this repository multiple approaches are implemented for localization, planning and controls.
 
-The final report can downloaded here: [Report](./docs/iRobo_Report.pdf)
+__The final report can be read here: [Report](./docs/iRobo_Report.pdf)__
 
 ## Using the repository
 
